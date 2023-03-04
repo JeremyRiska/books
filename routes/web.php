@@ -22,3 +22,4 @@ Route::get('/', [BooksController::class, 'index'])->name('index');
 // Route::get('/autocomplete-search', [BooksController::class], 'autocompleteSearch');
 Route::get('/autocomplete-search', 'App\Http\Controllers\BooksController@autocompleteSearch')->name('authors-autocomplete');
 Route::post('/', [BooksController::class, 'store'])->name('add-book');
+Route::get('/books-json', [BooksController::class, 'booksJson'])->name('books-json');

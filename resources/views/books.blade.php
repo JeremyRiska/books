@@ -46,6 +46,7 @@
 
         </div>
         <hr>
+        <p> <a href="{{ route('books-json')}}"> Zobraz zoznam ako jsson >> </a> </p>
         <div class="row">
             <div class="col-12 p-5">
                 <table class="table table-bordered">

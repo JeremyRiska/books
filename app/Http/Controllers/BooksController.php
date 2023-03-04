@@ -20,6 +20,11 @@ class BooksController extends Controller
         ]);
     }
 
+    public function booksJson()
+    {
+        return json_encode(Book::get()->all());
+    }
+
     public function store(Request $request)
     {
         \Log::info($request);
