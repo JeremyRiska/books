@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Author;
 use App\Models\Book;
+use Illuminate\Support\Facades\Validator;
+
 
 class BooksController extends Controller
 {
@@ -27,14 +29,32 @@ class BooksController extends Controller
 
     public function store(Request $request)
     {
-        \Log::info($request);
+        $validator  = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'isbn' => 'required',
+            'price' => 'required',
+            'category_id' => 'required',
+            'author' => 'required'
+        ],
+        [
+            'name.required' => 'Kniha musi mat nazov',
+            'isbn.required' => 'ISBN je povinne',
+            'price.required' => 'knihy nie su zadarmo, zadaj cenu',
+            'category_id.required' => 'Zadaj kategoriu',
+            'author.required' => 'zadaj meno autora' 
+        ]);
+        if ($validator->fails()) {
+            return redirect('/')->withErrors($validator);
+        }
+        $validated = $validator->validated();
 
         $newBook = new Book();
-        $newBook->name = $request->name;
-        $newBook->isbn = $request->isbn;
-        $newBook->price = $request->price;
-        $newBook->category_id = $request->category_id;
-        $newBook->author_id = $this->getAuthor($request->search);
+        $newBook->name = $validated['name'];
+        $newBook->isbn = $validated['isbn'];
+        $newBook->price = $validated['price'];
+        $newBook->category_id = $validated['category_id'];
+        $newBook->author_id = $this->getAuthor($validated['author']);
+
         $newBook->save();
         
         return back();
@@ -50,7 +70,7 @@ class BooksController extends Controller
         return Author::firstOrCreate(['author_name' => $authorName])->id;
     }
 
-    public function autocompleteSearch(Request $request)
+    public function searchAuthor(Request $request)
     {
           $query = $request->get('query');
           $filterResult = Author::where('author_name', 'LIKE', '%'. $query. '%')->pluck('author_name');
